@@ -1,4 +1,4 @@
 20120090/
 20120090.zip
-data/images/
-data/*.npz
+data/plant-pathology-2020-fgvc7/images
+data/plant-pathology-2020-fgvc7/*.npz
