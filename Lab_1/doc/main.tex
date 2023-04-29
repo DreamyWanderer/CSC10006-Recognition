@@ -1,0 +1,216 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{fancyhdr, url}
+\usepackage{ragged2e}
+\usepackage[pdftex]{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage[vietnamese]{babel}
+
+\usepackage{amsmath, amssymb}
+\usepackage{cases}
+\usepackage{bm}
+
+\usepackage{booktabs}
+
+\usepackage{biblatex}
+\addbibresource{Recognition-Lab 1.bib}
+
+\begin{document}
+	
+	\pagenumbering{gobble}
+
+	\begin{titlepage}
+		\centering
+		\large
+		ĐẠI HỌC KHOA HỌC TỰ NHIÊN, ĐẠI HỌC QUỐC GIA TP.HCM\\[.1in]
+		KHOA CÔNG NGHỆ THÔNG TIN\\BỘ MÔN KHOA HỌC MÁY TÍNH\\
+		\vfill
+		\huge NHẬN DẠNG\\[.1in]
+		\LARGE ĐỒ ÁN 1: PATTERN RECOGNITION\\PLANT DISEASES ON LEAF\\
+		\vfill
+		\RaggedRight
+		\large
+		Sinh viên thực hiện: Nguyễn Thế Hoàng (MSSV: 2012 0090)\\[.1in]
+		Giáo viên phụ trách: Lê Thanh Phong - Lê Thành Thái\\[.2in]
+		\Centering
+		BÀI TẬP MÔN HỌC - NHẬN DẠNG\\[.1in]
+		HỌC KỲ II - NĂM HỌC 2022 - 2023
+	\end{titlepage}
+	
+	\newpage	
+	
+	\pagenumbering{arabic}
+	
+	\section{Problem analyze}
+	
+	
+	\subsection{Objective}
+	
+	From a given training dataset includes images of leaf, we need to build a model that can recognize the status of that plant by observing images of leaf. There are 4 status (or categories) that a plant in a picture can be, including:
+	
+	\begin{itemize}
+		\item Healthy
+		\item Multiple diseases
+		\item Rust
+		\item Scab
+	\end{itemize}
+	
+	\subsection{Type of solution}
+	
+	The model will be run on a test set, in offline mode for grading and studying purpose. The model is trained using supervised learning, with batches of sample (offline) and based on model approach.
+	
+	\subsection{Measure performance}
+	
+	As often used in classification problems, we will use these metrics to measure the performance of the model:
+	
+	\begin{itemize}
+		\item \emph{Confusion matrix} to know the number of true/false classification for each category.
+		\item \emph{Precision score}
+		\item \emph{Recall score}
+		\item \emph{F1 score} for overall performance
+	\end{itemize}
+	
+	\subsection{Way of implementation}
+	
+	We will use \emph{scikit-learn} to implement Support Vector Machine (SVM) as the main classifier, and self-implementation for PCA model. We also use \emph{numpy, pandas} to store the numerical and sample while training and predicting, \emph{PIL.Image} library for image processing, and \emph{matplotlib.pyplot} for illustrating images and diagrams.
+	
+	\subsection{Running program}
+	
+	The folder structure of the submitted program is as followed:
+	
+	\begin{itemize}
+		\item \emph{src}: directory contains source code to run. Includes:
+			\begin{itemize}
+				\item \emph{data\_insights.ipynb}: only for overviewing given dataset.
+				\item \emph{main.ipynb}: main execution files.
+			\end{itemize}
+		\item \emph{doc}: directory contains this report file.
+		\item \emph{data}: directory contains dataset. It includes the given dataset from the teacher, \emph{submission.csv} contains result on test set, and other saved numpy array under .npz format. In the folder named \emph{images}, there must be all and only images from train and test set.
+	\end{itemize}
+	
+	To run the program successfully, one need to keep the folder structure as described above, even in Colab environment. Run the \emph{main.ipynb} to preprocess the data, train the model and predict on the test set.
+
+	\section{Data analyze and data processing}
+	
+	\subsection{Given dataset}
+	
+	The given dataset includes:
+	
+	\begin{itemize}
+		\item \emph{Folder of images}: contains all the training and testing images. There are 1821 images for each training and testing set.
+		
+		The image is in \emph{.jpg} type. Each has size $2048 \times 1365$ in pixels. The image also use RGB channel color format. So a numpy array contains an image has shape $(1365, 2048, 3)$.
+		
+		\item \emph{train.csv} List of name of train samples and one-hot vector encoded respects to each instances.
+		
+		After observing training data by running \emph{data\_insights.ipynb} file, we can conclude that:
+		
+		\begin{itemize}
+		\item All 1821 training instances have valid one-hot encoded (no null, each image belongs only to 1 category).	
+		\item Number of training intanses of each category is expressed in table \ref{tab:distribute_train}.
+		
+		\begin{table}[]
+		\centering
+		\begin{tabular}{@{}lllll@{}}
+		\toprule
+		\textbf{}          & \textbf{healthy} & \textbf{multiple\_diseases} & \textbf{rust} & \textbf{scab} \\ \midrule
+		Number of intances & 516              & 91                          & 622           & 592           \\
+		Ratio (\%)         & 28.66            & 5.05                        & 34.54         & 32.87         \\ \bottomrule
+		\end{tabular}
+		\caption{Distribution of each category in the training sample}
+		\label{tab:distribute_train}
+		\end{table}
+		
+		\item Most of the class in training set has same number of instances, except for the class \emph{multiple\_disease} which only has 91 instances. This can cause difficulty for the model to recognize images belong to this class.
+		\end{itemize}
+		
+		\item \emph{submission.csv} List of predictions for the test set. There are 5 columns. The first one is the name of image in the test set, the remaining columns are one-hot vector encoded with 4 categories, same as training data. 
+		
+	\end{itemize}
+	
+	\subsection{Data preprocessing}
+	
+	Since the models we will use are sensitive to the training sample, we need conduct following techniques to clean and transform the dataset, so that we can maximize the performance of the model.
+	
+	\subsubsection{Resize images}
+	
+	The original size of images is $2048 \times 1365$ in pixels. If we read all the images in the training set and conduct training the model, we will not have enough memory (it can easily reaches to $2048 \times 1365 \times 3 \times 1801 = 18 \text{GB}$). So we reduced all the images to the common size $640 \times 374$ in pixels, so we only need about 400MB when load all the training images to the memory for training model. The images are read and contain in numpy array type.
+	
+	\subsubsection{Transform to gray sclae}
+	
+	Although the size of images is much more smaller, since each pixel need 3 values of RGB to decode a color value, the number of features are still big. So we transformed all images to the gray scaling. It means each pixel now only need a value between $(0, 255)$ to decode information. As a result, the images loose all information of color (which is quite bad since some diseases only can be deteced through color information), but they still keep information of contrast, pattern.
+	
+	Now each image (or training sample) have $640 \times 374 = 239360$ features, with value from 0 to 255. An image contained in numpy array type has shape $(374, 640)$.
+	
+	\subsubsection{Histogram equalization}
+	
+	By using histogram equalization, we can even make the images even higer in contrast. This transform flattens the gray level histogram of an image so that all intensities are equally common as possible. As a result, the image intensity is normalized before futher processing and also a way to increase image contrast, the details of the dark regions appear clearly (which is quite important in some diseases with darker region on the leaf). 
+	
+	The transform function we used, in this case, is a cummulative distribution function (cdf) of the pixel values in the image. After that all the pixel values are normalized to between 0 and 1 \cite{Solem2012}. We can see the result after above transformations in diagram \ref{pic:cmp_leaf}.
+	
+	\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{pic_1.png}
+	\caption{From top to bottom: Original image with RGB channel; Image transformed to gray scaling; Image in gray scaling and histogram equalization}
+	\label{pic:cmp_leaf}
+	\end{figure}
+	
+	\subsubsection{Feature extraction - Dimensionality reduction: Principal component analysis (PCA)}	
+	
+	As the number of intances training are much smaller than the number of features (1801 compared to 239360), to avoid the \emph{curse of dimension} and speed up the training time of Support Vector Machine (SVC) as the classifier, we need to project each image to a smaller manifold. Here I tried using PCA for this purpose. The implementation is as descbribed in \cite{Solem2012}.
+	
+	Before conducting PCA, we need stack all training images (after aboved trasforming steps) all together in a numpy array. Additionally, we will flatten all the images to 1D array.As a result, we now have a numpy array has shape $(1801, 239360)$. This will be used through all following training steps. So we have 1801 training samples, each has 239360 features.
+	
+	After conducting PCA techniques (with compact trick used as the number of dimension is so much higher than number of data), the shape of array becomes $(1801, 30)$. So by using PCA, we have lowered the number of features from 239360 to just only 30. These 30 components have the highest variance to differentiate images in different category, while maintaining local group for images in same class. From now on, we can project every image on this basis to have a "point" in 30-dimension space. By using a classifier, we can classify these point.
+	
+	\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=1]{pic_2.png}
+	\caption{The image presentation of: the mean of whole dataset (top left) and 11 "eigenleaf" sorted in descending order of variance}
+	\end{figure}
+	
+	\subsubsection{Standadize}
+	
+	The last step in the preprocessing data pipeline is standadizing data. Since we use SVM as a classifier, we need to make every pixel value in the training sample have means 0 and unit variance. The standadize process is computed on each feature of the image on the whole set.
+	
+	\section{Training model SVC and experiment result}
+	
+	We use two types of SVM for comparing performance: the Linear SVC and the Nonlinear SVC (here we use RBF kernel type). For each type, we manually fine-tune the parameter to have the best performance as following:
+	
+	\begin{itemize}
+		\item Linear SVC:
+			\begin{itemize}
+				\item $C = 1$
+			\end{itemize}
+		\item RBF kernel Nonelinear SVC:
+			\begin{itemize}
+				\item $\gamma = 0.1$
+				\item $C = 0.9$ 
+			\end{itemize}
+	\end{itemize}
+	
+	With above parameters, we get the following performance score with 3-cross-validation technique in table \ref{tab:performance_score}.
+	
+	\begin{table}[]
+	\centering 
+	\begin{tabular}{@{}lll@{}}
+	\toprule
+	\textbf{Score (Average micro)} & \textbf{Linear SVM} & \textbf{RBF Kernel Nonlinear SVM} \\ \midrule
+	Precision & 0.3703 & 0.403 \\
+	Recall    & 0.3703 & 0.403 \\
+	F1        & 0.3703 & 0.403 \\ \bottomrule
+	\end{tabular}
+	\caption{The performance score of different type SVM}
+	\label{tab:performance_score}
+	\end{table}
+	
+	The low performance score can be due to the removal of color information from the images (since the classifier can think that the dark region is always a sign of some diseases. We may improve by using grid-search technique, or conduct PCA with color version. This will be also the further work we may do to improve the performance of the model.
+	
+	\section{Conduct testing}
+	
+	The images, data of testing set are also preprocessed with all mentioned steps in section 2. The result has been saved to the file named \emph{submission.csv}.
+	
+	\newpage
+	
+	\printbibliography
+	
+\end{document}
