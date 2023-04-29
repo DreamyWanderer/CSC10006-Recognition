@@ -1,1 +1,1 @@
-"# CSC10006-Recognition" 
+# CSC10006-Recognition 
