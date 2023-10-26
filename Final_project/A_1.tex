@@ -1,0 +1,107 @@
+\section*{ \textbf{A-1: Local binary pattern (LBP) }}
+
+This section is based mainly on \cite{Pietikainen2011a} and \cite{Pietikainen2011}. All formula, information, specifications, etc. are collected from those references.
+
+\subsection*{a. Describe the specification of \LBPPR}
+
+\subsubsection*{Formula}
+
+Differ from the original $3 \times 3$ matrix computation in the original LBP, this generic formulation of \LBPPR can be used for any size of the neighborhood or any number of sampled points.
+
+Given an 2-D image $I(x, y)$ (each pixel is located at an arbitary location $(x, y)$); $g_c$ is the gray scale of an arbitary pixel locates at $(x, y)$. The whole picture is converted to monochromatic mode in grayscale color, or:
+
+\begin{equation*}
+	 I(x, y) = g_c
+\end{equation*}
+
+In a neighborhood area created by a circular with radius $R$, center at a pixel $(x, y)$ and choose $P$ sampling points, we call $g_p$ as the gray scale of the $p$-th sampling point:
+
+\begin{equation*}
+	g_p = I(x_p, y_p), p = 0, 1, \ldots P - 1
+\end{equation*}
+
+The position of sampling points is calculated as:
+
+\begin{align*}
+	x_p &= x + R\cos{ (2\pi\dfrac{p}{P}) }, \\
+	y_p &= y - R\sin{ (2\pi\dfrac{p}{P}) }
+\end{align*}
+
+Now, a picture can be presented as a local gray-scale distribution (i.e texture), characterized as the joint distribution of gray scale of $P + 1 (P > 0)$ neighboring pixels. We use this as a feature vector for that picture.
+
+\begin{align*}
+	T \approx t(s(g_0 - g_c), s(g_1 - g_c), \ldots, s(g_{P-1} - g_c))
+\end{align*}
+
+which $s(z)$ is defined as:
+
+\begin{equation*}
+	s(z) =
+	\begin{cases}
+		1, z \geq 0 \\
+		0, z < 0
+	\end{cases}
+\end{equation*}
+
+The generic formula of \LBPPR can be derived from above joint distribution:
+
+\begin{equation*}
+	\boxed{ \LBPPR(x_c, y_c) = \sum_{p = 0}^{P - 1} s(g_p - g_c)2^p}
+\end{equation*}
+
+for an arbitary center pixel $(x_c, y_c)$ with circular neightborhood has radius $R$ and choose $P$ sampling points.
+
+The local gray-scale distribution $T$, or a feture vector $S$, can thus be described with a $2^P$-bin discrete distribution of LBP code:
+
+\begin{equation*}
+	S = T \approx t(\LBPPR(x_c, y_x)
+\end{equation*}
+
+\subsubsection*{Advantages and disadvantages}
+
+This is described as the Table \ref{tab:LBP1}.
+	
+\begin{table}[!th]
+	\centering
+	
+	\begin{tabularx}{1.0\textwidth}{ XX }
+	
+	\toprule
+	\textbf{Advantages} & \textbf{Disadvantages} \\
+	
+	\midrule
+
+	\tabitem Not affected by the monotonic gray scale changes (e.x. by illumination chages). & \tabitem Affected by the rotation variance. \\
+	\tabitem Simple and quick computation. & \tabitem Tremendous number of code and distribution. \\
+	\tabitem Prove that operator applied to a small neighborhood area can be usually adequate. &\\
+	\tabitem Can be applied to various tasks in computer vision, not just for texture problems. \\
+	
+	\bottomrule
+	\end{tabularx}
+	
+	\caption{Comparision of advantages and disadvantages of \LBPPR}
+	\label{tab:LBP1}
+\end{table}
+
+\subsection*{b. Describe the specification of \LBPPRri}
+
+\subsubsection*{Formula}
+
+\LBPPRri can be rotational invariance, when be compared with the \LBPPR. We achieved that by using the following operator:
+
+\begin{equation*}
+	\boxed{ \LBPPRri = \min_i\text{ROR}(\LBPPR, i) }
+\end{equation*}
+
+which $\text{ROR}(x, i)$ means doing bitwise right roration of bit sequence $x$ by $i$ steps. In other words, for an arbitary \LBPPR, we do bitwise right roration until we get the minimum binary sequence. As a result, if we use $\text{LBP}_{8, 1}^{\text{ri}}$, we only need 36 codes when compared with $\text{LBP}_{8, 1}$ which we need 256 codes.
+
+\subsection*{c. Describe the specification of \LBPPRriu}
+
+\subsubsection*{Formula}
+
+A local binary pattern is called uniform if it has at most two circular 0-1 or 1-0 transitions. With the experiment, we found out that uniform patterns occur nearly 90\% of all patterns in images because the edge or boundary is main component in an image and uniform patterns can capture abrut changes in intensity of texture. So it is useless to label each non-uniform patterns individually. Not like \LBPPR, in \LBPPRriu we map each uniform pattern to an identical label, and the rest non-uniform pattern is put in the same label. As a result, we only need \emph{59} output labels if we use $\text{LBP}_{8, 1}^{\text{riu}2}$.
+
+
+In addition to the fact that we can use \LBPPRri to change every bit sequence to the minimum form and achieve the rotation invariance, the number of output labels is greatly reduced. For each uniform pattern, we use $\min_i\text{ROR}(\LBPPR, i)$ to change it to the minimum form, so the final number of output label is reducede from 59 to 10 (in case $\text{LBP}_{8, 1}^{\text{riu}2}$), as shown in the Picture \ref.
+
+Test

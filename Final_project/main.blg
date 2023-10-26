@@ -1,0 +1,17 @@
+[0] Config.pm:306> INFO - This is Biber 2.18
+[0] Config.pm:309> INFO - Logfile is 'main.blg'
+[125] biber-MSWIN64:340> INFO - === 
+[163] Biber.pm:418> INFO - Reading 'main.bcf'
+[291] Biber.pm:978> INFO - Found 9 citekeys in bib section 0
+[311] Biber.pm:4401> INFO - Processing section 0
+[324] Biber.pm:4592> INFO - Looking for bibtex file 'Recognition-Final.bib' for section 0
+[372] bibtex.pm:1713> INFO - LaTeX decoding ...
+[390] bibtex.pm:1518> INFO - Found BibTeX data source 'Recognition-Final.bib'
+[493] UCollate.pm:68> INFO - Overriding locale 'vi-VN' defaults 'variable = shifted' with 'variable = non-ignorable'
+[493] UCollate.pm:68> INFO - Overriding locale 'vi-VN' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[493] Biber.pm:4221> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'vi-VN'
+[508] bbl.pm:654> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[513] bbl.pm:757> INFO - Output to main.bbl
+[513] Biber.pm:130> WARN - ISBN '9781492032649 1492032646' in entry 'Aurelien2019' is invalid - run biber with '--validate_datamodel' for details.
+[514] Biber.pm:130> WARN - BibTeX subsystem: C:\Users\theho\AppData\Local\Temp\biber_tmp_8ySx\1f24c1b38470026328107891b37e1627_4916.utf8, line 6, warning: 172 characters of junk seen at toplevel
+[514] Biber.pm:132> INFO - WARNINGS: 2

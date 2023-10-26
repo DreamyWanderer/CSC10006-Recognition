@@ -1,0 +1,105 @@
+\section*{A-2. Principal Component Analysis(PCA) and Linear Discriminant Analysis (LDA)}
+
+This section is based mainly on \cite{shlens2014tutorial}. All formula, information, specifications, etc. are collected from those references. Any other references beside those will be cited in-text directly.
+
+\subsection*{a. Describe the PCA}
+
+\subsubsection*{Define the problem}
+
+Given a dataset $\bm{X}$, which is a matrix $m \times n$, where $m$ is the number of dimension of original feature, $n$ is the number of samples. We want to find another basis, which is a linear combination of original basis that can best re-express the dataset $\bm{X}$. In term of "best re-express", we mean that the new representation of the dataset (we call it $\bm{Y}$) need to have low noise and remove the redundancy dimension features.
+
+In other words, we need to find a matrix $P$ that can transform $\bm{X}$ into $\bm{Y}$:
+
+\begin{equation*}
+	\bm{PX = Y}
+\end{equation*}
+
+besides that:
+
+\begin{itemize}
+	\item $\bm{p_i}$ are the rows of $\bm{P}$. $\{ \bm{p_1}, \bm{p_2}, \ldots, \bm{p_m} \}$ are a set of new basis vectors, or \emph{principal component}. 
+	\item $\bm{x_i}$ are the columns of $\bm{X}$. Each $\bm{x_i}$ is an original sample.
+	\item $\bm{y_i}$ are the columns of $\bm{Y}$. Each $\bm{y_i}$ is a new way to express respective $\bm{x_i}$. 
+\end{itemize}
+
+We also need some assumptions of the dataset to set up a solution for PCA. That is, how a new $\bm{Y}$ can be seen as having low noise and non-redundancy?
+
+\subsubsection*{Assumptions}
+
+\begin{itemize}
+	\item \emph{Linearity}. It simplifies the problem by restristing the set of possible basis. As a result, PCA can re-expressing the data as a linear comination of some basis vectors.
+	\item \emph{Large variances have important structure}. We define the \emph{covariance matrix} $\bm{C_Y}$ as:
+	
+	\begin{equation*}
+		\bm{C_Y} = \dfrac{1}{n}\bm{YY}^T
+	\end{equation*}
+	
+	This covariance matrix shows us if $\bm{Y}$ is expressed well enough (in terms of low noise and low redundancy). In $\bm{C_Y}$:
+	
+	\begin{itemize}
+		\item The diagonal terms are the \emph{variance} of a particular feature.  Large values \emph{may} correspond to an interesting feature, or useful \emph{signal}. On the other hand, low values \emph{may} correspond to noise feature. We need to rotate the original basis such that it is parallel to the direction with largest variances.
+		
+		\item The off-diagonal terms are the \emph{covariance} between features. Large values \emph{may} correspond to high redundancy.
+	
+	With this assumption, all off-diagonal of $\bm{C_Y}$ need to be 0s (to remove all redundancy). So, $\bm{C_Y}$ must be a diagonal matrix.
+	\end{itemize}
+	
+		\item\emph{The principal components are orthogonal}. This will be used to show that we can use eigenvectors of $\bm{C_X}$ as \emph{principal components} of $\bm{X}$.
+	
+\end{itemize}
+
+\subsubsection*{Solving PCA using eigenvector decomposition}
+
+Using above observations, folloing are steps for solving PCA using eigenvector decomposition:
+
+\begin{enumerate}
+
+	\item For each feature, compute means over all the samples. Call it $\bm{\overline{x}}$. For each sample $\bm{x_i}$, subtracting off the mean of each feature: 
+
+	\begin{equation*}	
+		\bm{x_i} = \bm{x_i} - \bm{\overline{x}}
+	\end{equation*}
+	
+	\item Compute the covariance of $\bm{X}$: 
+	
+	\begin{equation*}	
+		\bm{C_X} = \dfrac{1}{n}\bm{XX}^T
+	\end{equation*}
+	
+	\item Compure the eigenvalues and eigenvectors of $\bm{C_X}$. We get $\bm{P}$ where each row $\bm{p_i}$ of $\bm{P}$ is an eigenvector of $\bm{C_X}$. Each $\bm{p_i}$ also has a respective eigenvector $\lambda_i$, which is also the variance of $\bm{X}$ along $\bm{p_i}$.
+	
+	\item Sort the eigenvectors in $\bm{P}$ according to $\lambda$ (or also respective variance). Decide the number of features we want to keep in the new basis (example we choose $d \ll m$). We receive  a shortened matrix $\bm{P_d}$.
+	
+	\item Project $\bm{X}$ to the new basis $\bm{P_d}$. 
+	
+	\begin{equation*}
+		\bm{Y} = \bm{P_dX}
+	\end{equation*}
+
+\end{enumerate}
+
+\subsection*{c. Compare PCA with LDA}
+
+This is described as the Table \ref{tab:PCA1}.
+
+\begin{table}[!th]
+	\centering
+	
+	\begin{tabularx}{1.0\textwidth}{ XX }
+	
+	\toprule
+	\textbf{PCA} & \textbf{LDA} \\
+	
+	\midrule
+
+	\tabitem Is an unsupervised technique. It ignores the label of the dataset. & \tabitem Is a supervised technique. \\
+	\tabitem Is often only used in dimensionality reduction. & \tabitem Can be used for both dimensionality reduction and classification tasks. \\
+	\tabitem Finds the directions have maximal variance values. & \tabitem Find a feature subspace that maximise class seperability. \\
+	\tabitem Outperform LDA when the number of samples per class is small or when the training data nonuniformly sample underlying distribution. \cite{Martinez2001} & \tabitem Make assumption that samples are normally distributed in each class and have equal class covariances. \cite{Martinez2001} \\	
+	
+	\bottomrule
+	\end{tabularx}
+	
+	\caption{Main differences between PCA and LDA technique}
+	\label{tab:PCA1}
+\end{table}

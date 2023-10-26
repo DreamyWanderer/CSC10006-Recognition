@@ -1,0 +1,65 @@
+\section*{B-2. Voice Math of Google Assistant and Google Home}
+
+This section is based mainly on \cite{Google}. All formula, information, specifications, etc. are collected from those references. Any other references beside those will be cited in-text directly.
+
+\subsection*{Overview of the solution}
+
+IoT developments help every device has the ability to connect to the Internet, to each other and especially interactive with user. Now people can set up a cluster smart device in their home and control them by various means, one of them is by user's voice. However, a family or a place may have lots of people attdending at the same time so it may cause chaos or wrong results if device can not recognize the identity of a voice. Besides that, there is high demanding of passwordless security for covenient and more safety, so voice also become a prominent mean to authenticate the user in a system without using password.
+
+As a result, Google Inc. has integrated a feature called "Voice Math" to their Google Home eco-system and Google Assitant on various device to cope with identification through voice. Every one who is using Android with Google Assistant, Google Home may access to this feature and trained the device to recognize their voice. This wil give various benefits to the user.
+
+\subsection*{Main functionality} 
+
+\begin{description}
+
+	\item[Personal results] The Google Assistant may show personal results from Gmail, Calendar, Photos, etc; control device in house, car, etc. if it recognizes a registerd voice. In case it receives a strange voice, it will not respond at all.
+	
+	\item[Payment] If we pay through Google Assistant, we can verify the purchases with Voice Math as a kind of authentication.
+
+\end{description}
+
+\subsection*{Evaluation}
+
+\begin{table}[ht!]
+	\centering
+	
+	\begin{tabularx}{1.0\textwidth}{ L{0.5\textwidth}L{0.5\textwidth} }
+	
+	\toprule
+	\textbf{Advatages } &  \textbf{Disadvantages} \\
+	
+	\midrule
+
+	\begin{minipage}{\linewidth}\begin{itemize}[leftmargin=10pt, labelindent=0pt, itemindent=0pt, noitemsep]
+		\item High accuracy with popular languages.
+		\item Low latency, quick processing. 
+		\item Just store enough information of user model on local device.
+		\item High applicable.
+	\end{itemize}\end{minipage} & 
+	\begin{minipage}{\linewidth}\begin{itemize}[leftmargin=10pt, labelindent=0pt, itemindent=0pt, noitemsep]
+		\item Inconsistent accuracy with other languages.
+		\item Not to be really robust in every context, surrounding environment.
+		\item Still can be bypassed by Generative model.
+		\item High bias to gender.
+	\end{itemize}\end{minipage} \\
+	
+	\bottomrule
+	\end{tabularx}
+	
+	\caption{Evaluation Voice Match}
+	\label{tab:B2_1}
+
+\end{table}
+
+	If it is still developed, this feature can bring more convenient for user in many aspects of living and working. But Google still need to reduce the False Accepting Rate to really bring the true privacy and security to real application.
+	
+\subsection*{Competitor}
+
+There are at least two other organization has made the same functionality and incorporate into their main products.
+
+\begin{description}
+
+	\item[Siri] The Assistant of Iphone eco-system.
+	\item[Cortana] Not really robust like above product, it is integrated to the product of Window OS.
+
+\end{description}

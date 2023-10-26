@@ -1,0 +1,160 @@
+\section*{A-3. Support Vector Machine}
+
+This section is based mainly on \cite{Alexandre2017}. All formula, information, specifications, etc. are collected from those references. Any other references beside those will be cited in-text directly.
+
+\subsection*{a. Describe the SVM}
+
+Following are major steps to build and train a SVM. Some formula derivation is described more clearly while some others are omitted.
+
+\begin{description}
+
+	\item[Step 1] \emph{Define basic linear classifier model}
+	
+	Given a training dataset $\mathcal{D} = \{ (\bm{x_i}, y_i) \ \vert \ \bm{x_i} \in \mathcal{R}^n, y_i \in \{ -1, 1 \} \}_{i = 1}^{m}$. Find $\bm{w} = \{ w_0, w_1, \ldots, w_n\}$ such that $\text{sign}(\bm{w} \cdot \bm{x_i}) = y_i$ for every $\bm{x_i}$. 
+	
+	Here, $m$ is the number of training samples, $n$ is the number of dimension of features. $\bm{x_i}$  is the $i$-th training instance. $y_i$ is the label of respective $\bm{x_i}$. We need to find a value of $\bm{w}$ which represent a hyperplanes seperates classes, like the Image \ref{}.
+	
+	\item[Step 2] \emph{Define geometric margin for comparing optimal hyperplane}
+	
+	A pure searching hyperplane may end up different solutions for each time we train the model. The goal of SVM is always returning the most \emph{optimal hyperplane } that have maximum distance to the nearest instance of each class.
+	
+	Given a dataset $\mathcal{D}$, for a hyperplane we compute its \emph{functional margin} $F$:
+	
+	\begin{equation*}
+		F = \min_{i=1, \ldots, m} y_i( \bm{w} \cdot \bm{x_i} + b)
+	\end{equation*}
+	
+	(which can be expressed as the smallest distance between the hyperplane and a training instance, but also need to classify correctly).
+	
+	To avoid always finding the best hyperplane just by rescaling $\bm{w}$ and $b$, we will use the \emph{geometric margin} $M$ instead to compare hyperplanes.
+	
+	\begin{equation*}
+	\boxed{
+		M = \min_{i = 1, \dots, m} y_i \left( \dfrac{\bm{w}}{\parallel\bm{w}\parallel} \cdot \bm{x_i} + \dfrac{b}{\parallel\bm{w}\parallel} \right) = \min_{i = 1, \ldots, m} y_i \left( \gamma_i \right)
+	}
+	\end{equation*}
+	
+	\item[Step 3] \emph{Define the SVM optimization problem}
+	
+	Now, the goal of SVM is \emph{finding the optimal seperating hyperplane which is defined by the normal vector $\bm{w}$ and the bias $b$ such that the geometric margin $M$ is the largest}. In other word, SVM trys to solve below optimiation problem:
+	
+	\begin{align*}
+		&\max_{\bm{w}, b} \ M \\
+		&\text{s.t.} \ \gamma_i \geq M, \ i = 1, \ldots, m	
+	\end{align*}
+	
+	As derived in \cite{}, the above problem can be re-express as:
+	
+	\begin{align*}
+		&\min_{ \bm{w}, b} \ \dfrac{1}{2}\parallel\bm{w}\parallel^2 \\
+		&\text{s.t.} \ y_i(\bm{w} \cdot \bm{x_i}) + b - 1 \geq 0, \ i = 1, \ldots, m	
+	\end{align*}
+	
+	\item[Step 4] \emph{Solving the SVM optimization using Lagrange multipliers, duality principal and KTT conditions}
+	
+	As proved in \cite{}, the above optimazation problem is now became \textbf{Wolfe dual problem}:
+	
+	\begin{alignat*}{2}
+		&\max_{\alpha} \ \sum_{i=1}^m \alpha_i - \dfrac{1}{2} \sum_{i=1}^m \sum_{j=1}^m \alpha_i\alpha_j y_iy_j \bm{x_i} \cdot \bm{x_j} \\
+		&\text{s.t.} \ \alpha_i \geq 0, \ \forall i = 1, \ldots, m \ \text{and} \ \sum_{i=1}^m \alpha_iy_i = 0
+	\end{alignat*}
+	
+	where $\alpha_i$ is the Lagrange multiplier of sample $x_i$.
+	
+	\item[Step 5] \emph{Using Soft margin SVM}.
+	
+	The parameter $C$ can be used to let SVM know how much do we let it makes mistakes, but it still need to make as few mistakes as possible.
+	
+	The Wofle dual problem now become:
+	
+	\begin{alignat*}{2}
+		&\max_{\alpha} \ \sum_{i=1}^m \alpha_i - \dfrac{1}{2} \sum_{i=1}^m \sum_{j=1}^m \alpha_i\alpha_j y_iy_j \bm{x_i} \cdot \bm{x_j} \\
+		&\text{s.t.} \ \boxed{ 0 \leq \alpha_i \leq C}, \ \forall i = 1, \ldots, m \ \text{and} \ \sum_{i=1}^m \alpha_iy_i = 0
+	\end{alignat*}
+	
+	The small $C$ will give a wider margin, but with more misclassifications. On the other hand, the big $C$ will make SVM become harder margin classifier, which does not accpect much mistakes.
+	
+	\item[Step 6] \emph{Using kernel trick}
+	
+	In case we can not use linear classifier, we need to project the samples to higher dimension and hope that SVM can find a better hyperplane and capable of seperating the classes. 
+	
+	Since we project the samples to other dimension, the Wolfle dual problem now become:
+	
+	\begin{alignat*}{2}
+		&\max_{\alpha} \ \sum_{i=1}^m \alpha_i - \dfrac{1}{2} \sum_{i=1}^m \sum_{j=1}^m \alpha_i\alpha_j y_iy_j \boxed{ K( \bm{x_i}, \bm{x_j} ) } \\
+		&\text{s.t.} \ 0 \leq \alpha_i \leq C, \ \forall i = 1, \ldots, m \ \text{and} \ \sum_{i=1}^m \alpha_iy_i = 0
+	\end{alignat*}
+	
+	where $K( \bm{x_i}, \bm{x_j} )$ is $\bm{x_i} \cdot \bm{x_j}$ after $\bm{x_i}, \bm{x_j}$ have been projected to another dimension. So basically, we only need to find a suitable $K( \bm{x_i}, \bm{x_j} )$ (or called \emph{kernel}) for an optimal non-linear hyperplane.
+	
+	\item[Step 7] \emph{Solving Wolfle dual problem}
+	
+	We can use SMO (sequential minimal optimization) algorithm to solve optimization problem in \textbf{step 6}. After finding $\alpha$, we can compute $\bm{w}$ and $b$ as following:
+	
+	\begin{equation*}
+		\bm{w} = \sum_{i = 1}^m \alpha_iy_i\bm{x_i}
+	\end{equation*}
+	
+	\begin{equation*}
+		b = \dfrac{1}{S}\sum_{i = 1}^S (y_i - \emph{w} \cdot x_i)
+	\end{equation*}
+	
+	where $S$ is the number of support vectors. \emph{Support vectors} are samples that have a positive Lagrange multiplier $\alpha_i$.
+	
+	\item[Step 8] \emph{Inference}
+	
+	The hypothesis function for computing class of a new sample is (using only $S$ support vectors):
+	
+	\begin{equation*}
+		h(\bm{x_i}) = \text{sign} \left( \sum_{j = 1}^S \alpha_jy_j( \bm{x_j} \cdot \bm{x_i}) + b \right)
+	\end{equation*}
+
+\end{description}
+
+\subsection*{Some prominent SVM kernel}
+
+\begin{description}
+
+	\item[Linear kernel] 
+	
+	\begin{equation*}
+		K(\bm{x_i}, \bm{x_j}) = (\bm{x_i} \cdot \bm{x_j})
+	\end{equation*}
+	
+	This kernel is often used in text classification tasks.
+	
+	\item[Polynomial kernel]
+	
+	\begin{equation*}
+		K(\bm{x_i}, \bm{x_j}) = (\bm{x_i} \cdot \bm{x_j} + c)^d
+	\end{equation*}
+	
+	This kernel if often used in case linear seperation is impossible.
+	
+	\item[Gaussian kernel]
+	
+	\begin{equation*}
+		K(\bm{x_i}, \bm{x_j}) = \exp(-\gamma\parallel\bm{x_i} - \bm{x_j}\parallel^2)
+	\end{equation*}
+	
+	This kernel project samples to space $\mathcal{R}^\infty$. It use the functions whose value depends only on the distance from some point.
+
+\end{description}
+
+\subsection*{OvR (OvA) and OvO}
+
+In case of multiclass classification tasks, we work with more than two sample classes. Because SVM is strict binary classifier, when we need to distinguish $n$ different classes, we have two strategy to use SVM in this task:
+
+\begin{description}
+
+	\item[One-versus-the-rest (OvR)]
+	
+	We train $n$ classifier, the $i$-th classifier detect if a sample belong to the $i$ class or not. To classify a new sample, put it to $n$ trained classifier and choose the class whose classifier output has the highest score.
+	
+	\item[One-versus-one (OvO)]
+	
+	For each pair $(i, j)$ class in $n$ classes, we train a classifier to detect a sample belong to class $i$ or $j$. We need to train $n \times (n - 1) / 2$ classifiers for every pair of class. To classify a new sample, we put it in all trained classifier and see which class "wins the most duels".
+	
+	SVM is more suitable to OvO strategy since it scales poorly with the size of the training set. Using OvO, a SVM classifier only need to train on a smaller subset of whole dataset.
+
+\end{description}

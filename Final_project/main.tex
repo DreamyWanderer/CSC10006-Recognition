@@ -1,0 +1,73 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{fancyhdr, url}
+\usepackage{ragged2e}
+\usepackage[pdftex]{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{xspace} % For automation of insecting space after a user-define command
+\usepackage{enumitem}
+\usepackage{array}
+
+\usepackage{amsmath, amssymb}
+\usepackage{cases}
+\usepackage{bm}
+
+\usepackage[vietnamese]{babel}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+
+\usepackage{biblatex}
+\addbibresource{Recognition-Final.bib}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true
+}
+
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+
+\newcommand{\LBPPR}{\ensuremath{\text{LBP}_\text{P,R} \xspace}}
+\newcommand{\LBPPRri}{\ensuremath{\text{LBP}_\text{P,R}^\text{ri}}\xspace}
+\newcommand{\LBPPRriu}{\ensuremath{\text{LBP}_\text{P,R}^{\text{riu}2}} \xspace}
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash\hspace{0pt}}p{#1}}
+
+\begin{document}
+	
+	\pagenumbering{gobble}
+
+	\begin{titlepage}
+		\centering
+		\large
+		ĐẠI HỌC KHOA HỌC TỰ NHIÊN, ĐẠI HỌC QUỐC GIA TP.HCM\\[.1in]
+		KHOA CÔNG NGHỆ THÔNG TIN\\BỘ MÔN KHOA HỌC MÁY TÍNH\\
+		\vfill
+		\huge NHẬN DẠNG\\
+		\LARGE BÁO CÁO MÔN HỌC CUỐI KỲ\\[.2in]
+		\vfill
+		\RaggedRight
+		\large
+		Sinh viên thực hiện: Nguyễn Thế Hoàng (MSSV: 2012 0090)\\[.1in]
+		Giáo viên phụ trách: Lê Thanh Phong - Lê Thành Thái\\[.2in]
+		\Centering
+		BÁO CÁO CUỐI KỲ - NHẬN DẠNG\\[.1in]
+		HỌC KỲ II - NĂM HỌC 2022 - 2023
+	\end{titlepage}
+	
+	\newpage	
+	
+	\pagenumbering{arabic}
+	
+	\input{./A_1.tex} \bigskip
+	\input{./A_2.tex} \bigskip
+	\input{./A_3.tex} \bigskip
+	\input{./A_4.tex} \bigskip
+	\input{./A_5.tex} \clearpage
+	\input{./B_1.tex} \bigskip
+	\input{./B_2.tex} \clearpage
+	
+	\printbibliography
+	
+\end{document}
